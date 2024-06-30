@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Rowdies:wght@300;400;700&display=swap" rel="stylesheet">
+        <style>
+            body{
+                text-align: center;
+                background-color: aliceblue;
+                color: green;
+                font-family: 'Rowdies';
+                margin: 15px;
+                position: relative;
+            }
+            nav{
+                text-align: right;
+            }
+            button, #filter{
+                font-size: 20px;
+                margin: 7px;
+                padding: 7px;
+                font-family: 'Rowdies';
+                color: green;
+                background-color: white;
+            }
+            button{
+                border-radius: 25px;
+            }
+            button:hover{
+                opacity: 50%;
+            }
+            #filter option[disabled] {
+                color: gray;
+            }
+            #filter{
+                float: left;
+            }
+            p{
+                display: inline-block;
+            }
+            #addStudentPopup{
+                display: flex;
+                background-color: rgba(255, 255, 255, 1);
+                border: 5px green solid;
+                height: 650px;
+                width: 1000px;
+                border-radius: 50px;
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            #overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 999;
+                background-color: rgba(255, 255, 255, 0.5);
+            }
+            #addStudentPopupContent{
+                display: inline-block;
+                width: 100%;
+            }
+            input[type="text"]{
+                font-family: 'Rowdies';
+            }
+            #calender{
+                align-content: center;
+            }
+            table{
+                display: inline-table;
+            }
+            .tdpopup{
+               border: 1px gray solid; 
+               margin: 0px;
+               padding: 20px;
+               /*padding: 10px 20px 10px 20px;*/
+            }
+            #cancel{
+                color: gray;
+            }
+            .desc{
+                font-style: italic;
+                color: rgb(170, 170, 170);
+                margin: 0px;
+            }
+            h3{
+                margin-bottom: 0px;
+            }
+            .Student{
+                border-top: 2px gainsboro solid;
+                border-bottom: 2px gainsboro solid;
+                margin: 0px;
+                color: gray;
+                font-size: 20px;
+                height: 25px;
+            }
+            th:hover{
+                opacity: 70%;
+            }
+            .optionsButton{
+                font-weight: bolder;
+                padding: 0px;
+                padding-inline: 3px;
+                border: none;
+                background-color: transparent;
+                color: black;
+            }
+            .optionsButton:hover{
+                border-radius: 0;
+                background-color: gainsboro;
+            }
+        </style>
+    </head>
+    <body onload="load()">
+        <script>
+            class Student{
+                constructor(name, dates, attendance){
+                    this.name = name
+                    this.dates = dates //Array of days they are supposed to arrive in the format "DD/MM/YYYY"
+                    this.attendance = attendance
+                }
+            }
+
+            const students = []
+
+            function date(){
+                today = new Date()
+                options = {month: 'short', day: '2-digit', year: 'numeric', weekday: 'short'}
+                document.getElementById("date").innerHTML = today.toLocaleDateString('en-US', options)
+                document.getElementById("date-label").style.transform = "translate(-{}px, 0)".replace("{}", window.getComputedStyle(document.getElementById("filter")).width.split('px')[0]/2)
+            }
+
+            function addStudentPopup(){
+                document.getElementById("addStudentPopup").style.display = "flex"
+                document.getElementById("overlay").style.display = "block"
+                
+                table = document.getElementById("calender")
+                month = today.getMonth() + 1
+                year = today.getYear()
+                days = new Date(year, month, 0).getDate()
+                for(week = 0; week < 4; week++){
+                    w = document.createElement("tr")
+                    w.className = "trpopup"
+                    table.appendChild(w)
+                    startDay = (today.getDate() - today.getDay() + 1)
+
+                    for(day = 0; day < 7; day++){
+                        d = document.createElement("td")
+                        d.className = "tdpopup"
+                        w.appendChild(d)
+                        if(week == 0 && day < today.getDay()){
+                            d.style.backgroundColor = "lightgray"
+                            d.style.color = "gray"
+                        } else {
+                            d.style.backgroundColor = "white"
+                            d.addEventListener('click', function() {dateSelect(this);})
+                        }
+                        d.innerHTML = (week * 7 + day + startDay) % days
+                        if(d.innerHTML == "0"){
+                            d.innerHTML = days
+                            month += 1
+                        }
+                        if(month == 13){
+                            month = 1
+                            year += 1
+                        }
+                        d.id = "D/M/Y".replace("D", d.innerHTML).replace("M", month).replace("Y", year-100)
+                    }
+                }
+            }
+            
+            function dateSelect(element){
+                if (element.style.backgroundColor == "white"){
+                    element.style.backgroundColor = "lightgreen"
+                } else {
+                    element.style.backgroundColor = "white"
+                }
+            }
+
+            function weekSelect(element){
+                weeks = document.getElementsByTagName("th")
+
+                day = 0
+                while(day < 7){
+                    if(weeks[day].innerText.trim() == element.innerHTML.trim()){
+                        break
+                    }
+                    day += 1
+                }
+
+                days = document.getElementsByClassName("tdpopup")
+                for (i = 0; i < days.length; i++) {
+                    if (days[i].style.backgroundColor != "lightgray" && i%7 == day) {
+                        days[i].style.backgroundColor = "lightgreen"
+                        console.log("changed")
+                    }
+                }
+            }
+
+            function addStudent(){
+                students.push(new Student(document.getElementById("studentName").value, [], []))
+                days = document.getElementsByTagName("td")
+                for(i = 0; i < 7; i++){
+                    if(days[i].style.backgroundColor == "lightgreen"){
+                        students[students.length - 1].dates.push(days[i].id)
+                    }
+                }
+                createStudentDiv(students[students.length - 1])
+                closePopup()
+            }
+
+            function closePopup(){
+                document.getElementById("addStudentPopup").style.display = "none"
+                document.getElementById("overlay").style.display = "none"
+
+                popupList = document.getElementsByClassName("trpopup")
+                for(i = popupList.length - 1; i > 0; i--){
+                    popupList[i].remove()
+                }
+                popupList = document.getElementsByClassName("tdpopup")
+                for(i = popupList.length - 1; i >= 0; i--){
+                    popupList[i].remove()
+                }
+                
+            }
+
+            function createStudentDiv(student){
+                table = document.getElementById("studentTable")
+
+                studentRow = document.createElement("tr")
+                studentRow.className = "Student"
+                
+                nameCell = document.createElement("td")
+                nameCell.className = "name"
+                nameCell.innerHTML = student.name
+                if(student.name.trim() == ""){
+                    nameCell.innerHTML = "[UNNAMED STUDENT]"
+                }
+
+                optionsCell = document.createElement("td")
+                optionsCell.className = "options"
+
+                optionsButton = document.createElement("button")
+                optionsButton.innerHTML = "⋮"
+                optionsButton.className = "optionsButton"
+
+                table.appendChild(studentRow)
+                studentRow.appendChild(nameCell)
+                studentRow.appendChild(optionsCell)
+                optionsCell.appendChild(optionsButton)
+            }
+
+            function load(){
+                date()
+                for(let i = 0; i < students.length; i++){
+                    createStudentDiv(students[i])
+                }
+            }
+        </script>
+        <h1>Attendance Marker</h1>
+        <nav>
+            <button>Mark Attendance</button>
+            <button onclick="addStudentPopup()">Add Student</button>
+        </nav>
+
+        <div id="overlay"></div>
+
+        <div id="addStudentPopup">
+            <div id="addStudentPopupContent">
+                <h1>Add Student</h1> <br>
+                <p>Student Name: </p>
+                <input type="text" id="studentName"> <br> <br>
+                <h3>Schedule Days</h3>
+                <p class="desc">To select all of one weekday, click on the weekday</p> <br>
+                <table id="calender">
+                    <tr>
+                        <th><p onclick="weekSelect(this)"> Mon </p></th>
+                        <th><p onclick="weekSelect(this)"> Tues </p></th>
+                        <th><p onclick="weekSelect(this)"> Wed </p></th>
+                        <th><p onclick="weekSelect(this)"> Thurs </p></th>
+                        <th><p onclick="weekSelect(this)"> Fri </p></th>
+                        <th><p onclick="weekSelect(this)"> Sat </p></th>
+                        <th><p onclick="weekSelect(this)"> Sun </p></th>
+                    </tr>
+                </table> <br> <br>
+                <button onclick="closePopup()" id="cancel">Cancel</button>
+                <button onclick="addStudent()">&ensp; Add &ensp;</button>
+            </div>
+        </div>
+        
+        <select id="filter">
+            <option value="" disabled selected>Filter by</option>
+            <option value="all">All</option>
+            <option value="today">Today</option>
+        </select>
+        
+        <p id="date-label"> Today's date: <strong id="date"> </strong> </p>
+
+        <br> <br> <br>
+
+        <table id="studentTable">
+        </table>
+    </body>
+</html>
