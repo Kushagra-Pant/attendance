@@ -1,0 +1,111 @@
+body{
+    text-align: center;
+    background-color: aliceblue;
+    color: green;
+    font-family: 'Rowdies';
+    margin: 15px;
+    position: relative;
+}
+nav{
+    text-align: right;
+}
+button, #filter{
+    font-size: 20px;
+    margin: 7px;
+    padding: 7px;
+    font-family: 'Rowdies';
+    color: green;
+    background-color: white;
+}
+button{
+    border-radius: 25px;
+}
+button:hover{
+    opacity: 50%;
+}
+#filter option[disabled] {
+    color: gray;
+}
+#filter{
+    float: left;
+}
+p{
+    display: inline-block;
+}
+#addStudentPopup{
+    display: flex;
+    background-color: rgba(255, 255, 255, 1);
+    border: 5px green solid;
+    height: 650px;
+    width: 1000px;
+    border-radius: 50px;
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+#overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+#addStudentPopupContent{
+    display: inline-block;
+    width: 100%;
+}
+input[type="text"]{
+    font-family: 'Rowdies';
+}
+#calender{
+    align-content: center;
+}
+table{
+    display: inline-table;
+}
+.tdpopup{
+   border: 1px gray solid; 
+   margin: 0px;
+   padding: 20px;
+   /*padding: 10px 20px 10px 20px;*/
+}
+#cancel{
+    color: gray;
+}
+.desc{
+    font-style: italic;
+    color: rgb(170, 170, 170);
+    margin: 0px;
+}
+h3{
+    margin-bottom: 0px;
+}
+.Student{
+    border-top: 2px gainsboro solid;
+    border-bottom: 2px gainsboro solid;
+    margin: 0px;
+    color: gray;
+    font-size: 20px;
+    height: 25px;
+}
+th:hover{
+    opacity: 70%;
+}
+.optionsButton{
+    font-weight: bolder;
+    padding: 0px;
+    padding-inline: 3px;
+    border: none;
+    background-color: transparent;
+    color: black;
+}
+.optionsButton:hover{
+    border-radius: 0;
+    background-color: gainsboro;
+}
